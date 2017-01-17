@@ -1,10 +1,14 @@
-from setuptools import setup
+from distutils.core import setup
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
 import numpy
 
-ext_modules = [
-    Extension('ffm', ['fastFM/ffm.pyx'],
+
+USE_CYTHON = False  # command line option, try-import, ...
+
+ext = '.pyx' if USE_CYTHON else '.c'
+
+extensions = [
+    Extension('ffm', ['fastFM/ffm'+ext],
               libraries=['m', 'fastfm', 'cxsparse', 'blas'],
               library_dirs=['fastFM/', 'fastFM-core/bin/',
                             'fastFM-core/externals/CXSparse/Lib/'],
@@ -12,10 +16,13 @@ ext_modules = [
                             'fastFM-core/externals/CXSparse/Include/',
               numpy.get_include()])]
 
+if USE_CYTHON:
+    from Cython.Build import cythonize
+    extensions = cythonize(extensions)
+
 setup(
     name='fastFM',
-    cmdclass={'build_ext': build_ext},
-    ext_modules=ext_modules,
+    ext_modules=extensions,
 
     packages=['fastFM'],
 
