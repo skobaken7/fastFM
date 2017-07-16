@@ -12,6 +12,7 @@ os:
 dist: trusty
 
 before_install:
+    - echo -e "machine github.com\n  login ci-user\n  password $CI_USER_PASSWORD" >> ~/.netrc
     # get access to private fastFM-core2 subrepo
     - openssl aes-256-cbc -K $encrypted_36432524a830_key -iv $encrypted_36432524a830_iv
       -in deploy_rsa.enc -out /tmp/deploy_rsa -d
