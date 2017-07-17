@@ -1,7 +1,6 @@
 language: c
 env:
   global:
-  - secure: LBM9j33dtDtx7p/pXlcCYucnIXSq0KUwuOL2BZ61+wO/OsPojshr7x3x1fnyLWiCSclgF3he96+StQQ3wd8E/I1d+Tpb/LHa57Rr48khC6L4cMPIsLnD4bPS19/6sRN0sn8Nzo586xWEFWhh9HJF/GCbMgiFcIB+sdpAVKYds+PjxiSe01HR6HVxDwkdnrTBTkIYbZyQyFLqhpl1yTBlz4D27PZRZpNKYQMzDVz5XR/gKLvg1zgkAIbi25uOL2q6VU446GqIod9DfmCDiJT99ggEc2KvzTgXhx9r0Vz/QX042cNjQCwAt21OEALRs9mtr3jxcOXIEJDC4CngX2xG2YkAPgIRSIYwxe6WwWTIB/7I9bCPyy6c8CUDzyKlwOSjlQV70NKcmj8ZJvaphnzioIPOtSwgLjXFoRp67TclkwnATS3soru0vZRhciMcpv9F/KSLZTI2WWWl7qW8nHtc/NS2piQw6VaWrNOg+kNlHL1PeMgq1lFOREsrtMlLTJhWCdw9ei6Jnm/WlvXsLlh0z81O1w3n5TtpNhfm1XRiXylgpIr6SYIFOBKXf00UnrjsDsq/jM56KZfOZQYH1w1URM0KK75sdgFVeUIpVtm/s8f66GG5hBJwUYXUO4TZqmIpTtQCu+vYTfApWXY3irxWSIdG3LGMmtSLNAC8z4k96FU=
   - secure: yg9UefZmuAESNCeE3BzDHhpb/sC7PnAsz0k+i63CN0HHZW7IOheqNJFpJlXpEmPKf/b59MOX6PnNNyCkoPnZaNqIvCTd1Msxd365RtOPdmTQQOegkMbKurxsbDUxDe2VnFQ/xjYJqQSNFLAhZ5kRyYLpp4zeOJbv/LdApMX0h0wF38GHMnsWPAF05gvYGQOHuocs03KrMz8PIQ4shocIGJXDwivrpxWATieDgY/tuJQxah7+B+p37GvASHaZ4JjHwf5EkJTdaUdjDtTiV8k2Y6EEryzldPy89sqGwg1Wtyu9x/+w4dmRYA+KK/XncDCYS/3xnyCeX6qwD6JpyjMkV27HyZGBNGrbjUu0COh4ZZBgCsdYnRTjHpFvvQQGLdkROWFrbfKu0KCAKviREPAH4jlQbLfsWkbdsIvUAF1Wt9qjot6datcFeS8A8XGIuR66K28JrAq+2QO4DKKqv6G/NwrDlr72/X5/l6Ogy5NqsT6shIgSHySU+S6sy10JwKOhDxH13H2rTs5B1AqFh3OITYbGU/Q+0MB/cAlx5sOepXFzx9x2qzoqPozv/PbSoAB4ifgUpAg/3FevbAs5BKe4o2/jp7dr7sexjMp89djdZbC7AKVYaAEt5gHaA0d0MzhDxF48OINgFIG0FI6L4C4uomXDTgCiG/6NHZhINSoBi2w=
   matrix:
   - TRAVIS_PYTHON_VERSION="2.7"
@@ -14,14 +13,8 @@ os:
 dist: trusty
 
 before_install:
-    - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-      #    - echo -e "machine github.com\n  login ci-user\n  password $CI_USER_PASSWORD" >> ~/.netrc
     # get access to private fastFM-core2 subrepo
-    - openssl aes-256-cbc -K $encrypted_36432524a830_key -iv $encrypted_36432524a830_iv
-      -in deploy_rsa.enc -out /tmp/deploy_rsa -d
-    - eval "$(ssh-agent -s)"
-    - chmod 600 /tmp/deploy_rsa
-    - ssh-add /tmp/deploy_rsa
+    - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
       # fastFM-core depends on cblas
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y libopenblas-dev; fi
     - if [[ "$TRAVIS_PYTHON_VERSION" =~ "^2" ]]; then
