@@ -41,7 +41,7 @@ before_install:
     - source activate test-environment
 
 install:
-    - git submodule update --init --recursive
+    #    - git submodule update --init --recursive
     - make
     - python setup.py bdist_wheel
     - pip install dist/*.whl
