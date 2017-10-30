@@ -74,6 +74,7 @@ class FMRegression(FactorizationMachine, RegressorMixin):
         self.step_size = step_size
         self.task = "regression"
         self.warm_start = warm_start
+        self.iter_count = 0
 
     def fit(self, X, y):
         """ Fit model with specified loss.
@@ -94,9 +95,13 @@ class FMRegression(FactorizationMachine, RegressorMixin):
         X = X.T  # creates a copy
         X = check_array(X, accept_sparse="csc", dtype=np.float64)
 
-        self.w0_, self.w_, self.V_ = ffm.ffm_sgd_fit(self, X, y)
-        return self
+        _warm_start = self.warm_start
+        self.warm_start = self.warm_start and self.iter_count > 0
 
+        self.w0_, self.w_, self.V_ = ffm.ffm_sgd_fit(self, X, y)
+        self.warm_start = _warm_start
+        self.iter_count += self.n_iter
+        return self
 
 class FMClassification(BaseFMClassifier):
 
@@ -162,6 +167,7 @@ class FMClassification(BaseFMClassifier):
         self.step_size = step_size
         self.task = "classification"
         self.warm_start = warm_start
+        self.iter_count = 0
 
     def fit(self, X, y):
         """ Fit model with specified loss.
@@ -195,5 +201,10 @@ class FMClassification(BaseFMClassifier):
         X = X.T  # creates a copy
         X = check_array(X, accept_sparse="csc", dtype=np.float64)
 
+        _warm_start = self.warm_start
+        self.warm_start = self.warm_start and self.iter_count > 0
+
         self.w0_, self.w_, self.V_ = ffm.ffm_sgd_fit(self, X, y)
+        self.warm_start = _warm_start
+        self.iter_count += self.n_iter
         return self
