@@ -5,9 +5,11 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn import metrics
 from sklearn.datasets import make_regression
+from sklearn.metrics import mean_squared_error
 from sklearn.utils.testing import assert_almost_equal
 from fastFM import sgd
 from fastFM import als
+from fastFM.datasets import make_user_item_regression
 
 
 def get_test_problem(task='regression'):
@@ -89,6 +91,35 @@ def test_sgd_classification_small_example():
     print(y_pred)
     assert metrics.accuracy_score(y, y_pred) > 0.95
 
+def test_sgd_warm_start():
+    X, y, coef = make_user_item_regression(label_stdev=0)
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.33, random_state=42)
+    X_train = sp.csc_matrix(X_train)
+    X_test = sp.csc_matrix(X_test)
+
+    fm = sgd.FMRegression(n_iter=10*y_train.shape[0], l2_reg_w=0, l2_reg_V=0, rank=2, step_size=0.01, init_stdev=0.1, random_state=10)
+    fm.fit(X_train, y_train)
+    print(fm.iter_count)
+    y_pred = fm.predict(X_test)
+    error_10_iter = mean_squared_error(y_pred, y_test)
+
+    # fm = sgd.FMRegression(n_iter=5*y_train.shape[0], l2_reg_w=0, l2_reg_V=0, rank=2, step_size=0.01, init_stdev=1.0)
+    fm = sgd.FMRegression(n_iter=5*y_train.shape[0], l2_reg_w=0, l2_reg_V=0, rank=2, step_size=0.01, init_stdev=0.1, random_state=10, warm_start=True)
+    fm.fit(X_train, y_train)
+    print(fm.iter_count)
+    y_pred = fm.predict(X_test)
+    error_5_iter = mean_squared_error(y_pred, y_test)
+
+    fm.fit(sp.csc_matrix(X_train), y_train)
+    print(fm.iter_count)
+    y_pred = fm.predict(X_test)
+    error_5_iter_plus_5 = mean_squared_error(y_pred, y_test)
+
+    print(error_5_iter, error_5_iter_plus_5, error_10_iter)
+
+    assert error_10_iter == error_5_iter_plus_5
 
 def test_clone():
     from sklearn.base import clone
@@ -104,5 +135,6 @@ def test_clone():
 
 if __name__ == '__main__':
     test_sgd_regression_small_example()
-    test_first_order_sgd_vs_als_regression()
-    test_second_order_sgd_vs_als_regression()
+    test_first_order_sgd_vs_sgd_regression()
+    test_second_order_sgd_vs_sgd_regression()
+    test_sgd_warm_start()
