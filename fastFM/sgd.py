@@ -43,6 +43,9 @@ class FMRegression(FactorizationMachine, RegressorMixin):
         Stepsize for the SGD solver, the solver uses a fixed step size and
         might require a tunning of the number of iterations `n_iter`.
 
+    warm_start : boolean
+        Enable warm start when fitting.
+
     Attributes
     ---------
 
@@ -57,7 +60,7 @@ class FMRegression(FactorizationMachine, RegressorMixin):
     """
 
     def __init__(self, n_iter=100, init_stdev=0.1, rank=8, random_state=123,
-                 l2_reg_w=0.1, l2_reg_V=0.1, l2_reg=0, step_size=0.1):
+                 l2_reg_w=0.1, l2_reg_V=0.1, l2_reg=0, step_size=0.1, warm_start = False):
         super(FMRegression, self).\
             __init__(n_iter=n_iter, init_stdev=init_stdev, rank=rank,
                      random_state=random_state)
@@ -70,6 +73,7 @@ class FMRegression(FactorizationMachine, RegressorMixin):
         self.l2_reg = l2_reg
         self.step_size = step_size
         self.task = "regression"
+        self.warm_start = warm_start
 
     def fit(self, X, y):
         """ Fit model with specified loss.
@@ -127,6 +131,9 @@ class FMClassification(BaseFMClassifier):
         Stepsize for the SGD solver, the solver uses a fixed step size and
         might require a tunning of the number of iterations `n_iter`.
 
+    warm_start : boolean
+        Enable warm start when fitting.
+
     Attributes
     ---------
 
@@ -141,7 +148,7 @@ class FMClassification(BaseFMClassifier):
     """
 
     def __init__(self, n_iter=100, init_stdev=0.1, rank=8, random_state=123,
-                 l2_reg_w=0, l2_reg_V=0, l2_reg=None, step_size=0.1):
+                 l2_reg_w=0, l2_reg_V=0, l2_reg=None, step_size=0.1, warm_start = False):
         super(FMClassification, self).\
             __init__(n_iter=n_iter, init_stdev=init_stdev, rank=rank,
                      random_state=random_state)
@@ -154,6 +161,7 @@ class FMClassification(BaseFMClassifier):
         self.l2_reg = l2_reg
         self.step_size = step_size
         self.task = "classification"
+        self.warm_start = warm_start
 
     def fit(self, X, y):
         """ Fit model with specified loss.
